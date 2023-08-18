@@ -1,8 +1,8 @@
 use std::path::PathBuf;
 
 use glium::{
-    uniform, BackfaceCullingMode, Display, DrawParameters, Frame, IndexBuffer, Program, Surface,
-    VertexBuffer,
+    uniform, BackfaceCullingMode, Display, DrawParameters, Frame, Program, Surface,
+    VertexBuffer, index::NoIndices,
 };
 use glm::Mat4;
 
@@ -11,21 +11,15 @@ use nalgebra_glm as glm;
 
 pub struct Mesh<'a> {
     pub vertex_buffer: VertexBuffer<Vertex>,
-    pub index_buffer: IndexBuffer<u32>,
     pub shader: &'a Program,
 }
 
 impl<'a> Mesh<'a> {
     pub fn load(display: &Display, path: PathBuf, shader: &'a Program) -> Self {
-        let (v_data, i_data) = wavefront::load(path);
-
+        let (v_data, _) = wavefront::load(path);
         let v_buffer = VertexBuffer::new(display, &v_data).expect("Failed to create vertex buffer");
-        let i_buffer =
-            IndexBuffer::new(display, glium::index::PrimitiveType::TrianglesList, &i_data)
-                .expect("Failed to create index buffer");
         Mesh {
             vertex_buffer: v_buffer,
-            index_buffer: i_buffer,
             shader,
         }
     }
@@ -48,8 +42,8 @@ impl<'a> Mesh<'a> {
 
         frame
             .draw(
-                (&self.vertex_buffer, &self.vertex_buffer),
-                &self.index_buffer,
+                &self.vertex_buffer,
+                &NoIndices(glium::index::PrimitiveType::TrianglesList),
                 self.shader,
                 &uniform! {model: model, view: view, projection: projection, light_pos: light_pos},
                 &DrawParameters {

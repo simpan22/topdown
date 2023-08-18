@@ -1,7 +1,7 @@
 extern crate glium;
 
 use camera::Camera;
-use glium::Display;
+use glium::{Display, glutin::event_loop::EventLoop};
 use hecs::World;
 use light::Light;
 use mesh_repo::MeshRepo;
@@ -28,19 +28,20 @@ fn rotate_system(world: &mut World) {
     }
 }
 
-fn initialize_glium() -> Display {
-    let events_loop = glium::glutin::event_loop::EventLoop::new();
+fn initialize_glium() -> (Display, EventLoop<()>) {
+    let event_loop = glium::glutin::event_loop::EventLoop::new();
     let wb = glium::glutin::window::WindowBuilder::new()
         .with_inner_size(glium::glutin::dpi::LogicalSize::new(1024.0, 768.0))
         .with_title("Topdown");
 
     let cb = glium::glutin::ContextBuilder::new();
-    let display = glium::Display::new(wb, cb, &events_loop).expect("Failed to create the display");
-    display
+    let display = glium::Display::new(wb, cb, &event_loop).expect("Failed to create the display");
+
+    (display, event_loop)
 }
 
 fn main() {
-    let display = initialize_glium();
+    let (display, event_loop) = initialize_glium();
 
     // Create the world
     let mut world = World::new();
@@ -69,6 +70,8 @@ fn main() {
         Rotate {},
     ));
 
+
+    
 
     loop {
         rotate_system(&mut world);

@@ -10,6 +10,6 @@ uniform mat4 projection;
 
 void main() {
     mat4 matrix = projection * view * model;
-    //v_normal = transpose(inverse(mat3(matrix))) * normal;
+    v_normal = transpose(inverse(mat3(matrix))) * normal;
     gl_Position = matrix * vec4(position, 1.0);
 }

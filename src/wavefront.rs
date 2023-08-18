@@ -59,7 +59,6 @@ pub fn load(path: PathBuf) -> (Vec<Vertex>, Vec<u32>) {
                         .parse()
                         .unwrap();
 
-                    // TODO: Push texture indices and normal indices to separate vectors
                     i_data.push(vi - 1);
                     ni_data.push(ni - 1);
                 }
@@ -78,15 +77,24 @@ pub fn load(path: PathBuf) -> (Vec<Vertex>, Vec<u32>) {
         current_line.clear();
     }
 
+    // All vertices including doubles on corners
+    let mut vert_list: Vec<Vertex> = vec![];
 
+    for (vertices, normals) in i_data.chunks(3).zip(ni_data.chunks(3)) {
+        for i in 0..3 {
+            let vertex_idx = vertices[i] as usize;
+            let vertex = v_data[vertex_idx];
 
-    (
-        v_data
-            .iter()
-            .map(|(x, y, z)| Vertex {
-                position: [*x, *y, *z],
-            })
-            .collect(),
-        i_data,
-    )
+            let normal_idx = normals[i] as usize;
+            let normal = vn_data[normal_idx];
+
+            vert_list.push(Vertex{
+                position: [vertex.0, vertex.1, vertex.2],
+                normal: [normal.0, normal.1, normal.2],
+                
+            });
+        }
+    }
+
+    (vert_list, i_data)
 }
