@@ -5,12 +5,12 @@ use crate::mesh::Mesh;
 #[derive(Eq, PartialEq, Hash, Clone)]
 pub struct MeshId(u32);
 
-pub struct MeshRepo<'a> {
-    entries: HashMap<MeshId, Mesh<'a>>,
+pub struct MeshRepo {
+    entries: HashMap<MeshId, Mesh>,
     n_meshes: u32,
 }
 
-impl<'a> MeshRepo<'a> {
+impl MeshRepo {
     pub fn new() -> Self {
         MeshRepo {
             entries: HashMap::new(),
@@ -18,7 +18,7 @@ impl<'a> MeshRepo<'a> {
         }
     }
 
-    pub fn insert(&mut self, mesh: Mesh<'a>) -> MeshId {
+    pub fn insert(&mut self, mesh: Mesh) -> MeshId {
         let id = MeshId(self.n_meshes);
         self.entries.insert(id.clone(), mesh);
         self.n_meshes += 1;
